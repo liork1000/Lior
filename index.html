@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 56px; /* Height of the navbar */
+    }
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1030; /* Ensure it stays on top of other content */
+    }
+    .navbar-nav a {
+      transition: color 0.3s ease;
+    }
+    .navbar-nav a:hover {
+      color: #007bff; /* Change color on hover */
+    }
+    #about {
+      padding: 60px 0;
+    }
+    #about h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    #about img {
+      border: 3px solid #ddd;
+    }
+    #about p {
+      margin: 0 auto;
+      max-width: 800px;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    #projects {
+      padding: 60px 0;
+    }
+    #projects h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    .card-title {
+      font-weight: 700;
+    }
+    .card-text small {
+      font-weight: 600;
+    }
+    .card-img-top {
+      height: 200px; /* Adjust height as needed */
+      object-fit: cover; /* Ensure images cover the container */
+    }
+    .profile-img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-top: 20px;
+    }
+    .skill-img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+
+    #contact {
+      background-color: #000;
+      color: #fff;
+      padding: 60px 0;
+    }
+    #contact h1 {
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    .contact-info {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    .contact-info img {
+      width: 30px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    .social-icons img {
+      width: 50px;
+      height: 50px;
+      margin: 0 10px;
+      vertical-align: middle;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Portfolio</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#home">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#projects">Projects</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#skills">Skills</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#contact">Contact</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Home Section -->
+  <section id="home" class="container text-center mt-5">
+
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="container text-center mt-5">
+    <h1 class="mb-4">About</h1>
+    <img src="images/about/1.jpg" alt="Personal Picture" class="img-fluid rounded-circle mb-4" style="width: 150px; height: 150px;">
+    <p class="lead">
+      B.Sc. Industrial and Management Engineer with a specialization in Information Systems. Strong background in training and customer service within financial institutions. Self-taught data enthusiast with excellent technological absorption and human relations skills. Seeking an entry-level data analyst position in the Central district to apply analytical skills and drive data-driven decisions.
+    </p>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="container text-center mt-5">
+    <h1 class="mb-5">Projects</h1>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+          <img src="images/projects/1.jpg" class="card-img-top" alt="Project 1 Image">
+          <div class="card-body">
+            <h5 class="card-title">Project 1</h5>
+            <p class="card-text">My final project at Tel Aviv Sourasky Medical Center optimized the Neurology Department, reducing staff workload and improving patient experience using Power BI and Python.</p>
+            <p class="card-text"><small class="text-muted"><a href="https://www.linkedin.com/feed/update/urn:li:activity:7217063680209780737/" target="_blank">Blog Post</a></small></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+          <img src="images/projects/2.jpg" class="card-img-top" alt="Project 2 Image">
+          <div class="card-body">
+            <h5 class="card-title">Project 2</h5>
+            <p class="card-text">Revolutionized Enrollment System: See how data-driven design enhances efficiency and user experience!</p>
+            <p class="card-text"><small class="text-muted"><a href="https://www.linkedin.com/feed/update/urn:li:activity:7219953885870714880/" target="_blank">Blog Post</a></small></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+          <img src="images/projects/3.jpg" class="card-img-top" alt="Project 3 Image">
+          <div class="card-body">
+            <h5 class="card-title">Project 3</h5>
+            <p class="card-text">Dive into how I transformed personal workout data using SQL, Python, and Matplotlib to enhance training and engagement. See key trends and visualizations that drive better fitness decisions!</p>
+            <p class="card-text"><small class="text-muted"><a href="https://www.linkedin.com/feed/update/urn:li:activity:7221909003495178241/" target="_blank">Blog Post</a></small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="container text-center mt-5">
+    <h1 class="mb-5">Skills</h1>
+    <div class="row">
+      <div class="col-md-3">
+        <img src="images/skills/1.png" class="skill-img" alt="Python Icon">
+        <h5>Python</h5>
+        <p>Self-learning via Udemy and YouTube, University courses, Pandas</p>
+        <p><a href="https://www.udemy.com/course/python-data-analysis-visualization/?couponCode=ST10MT8624">2024 Python Data Analysis & Visualization Masterclass</a></p>
+      </div>
+      <div class="col-md-3">
+        <img src="images/skills/2.png" class="skill-img" alt="Data Visualization Icon">
+        <h5>Data Visualization</h5>
+        <p>Udemy course, university projects and presentations, Power BI, matplotlib, Seaborn</p>
+        <p><a href="https://www.udemy.com/course/microsoft-power-bi-up-running-with-power-bi-desktop/?couponCode=ST10MT8624">Microsoft Power BI Desktop for Business Intelligence</a></p>
+      </div>
+      <div class="col-md-3">
+        <img src="images/skills/3.png" class="skill-img" alt="SQL Icon">
+        <h5>SQL</h5>
+        <p>SQL project assignments, ERD creation, Self-learning via Udemy and YouTube, University courses, Excel</p>
+        <p><a href="https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/?couponCode=ST10MT8624">The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert</a></p>
+        <p><a href="https://www.linkedin.com/in/lior-keren-683608176/details/featured/1720694944432/single-media-viewer/?type=IMAGE&profileId=ACoAACm8ocMByVYsKBzP9MVa_UpEipYOSUSDMKc">Sololearn- SQL</a></p>
+      </div>
+      <div class="col-md-3">
+        <img src="images/skills/4.png" class="skill-img" alt="Data Storytelling Icon">
+        <h5>Data Storytelling</h5>
+        <p>Core of the Industrial Engineering and Management degree</p>
+        <p><a href="https://www.hit.ac.il/academic/faculty_of_industrial_engineering_and_technology_management/bsc/information-technology-managemen/">HIT- Holon Institute of Technology, Field of choice - information technology management</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="text-center mt-5">
+    <div class="container">
+      <h1 class="mb-4">Contact Me</h1>
+      <p class="contact-info">
+        <img src="icons/email.png" alt="Email Icon">
+        <a href="mailto:lior.keren123@gmail.com" class="text-white">lior.keren123@gmail.com</a>
+      </p>
+      <p class="contact-info">
+        <img src="icons/phone.png" alt="Phone Icon"> 052-282-8213
+      </p>
+      <div class="social-icons d-flex justify-content-center">
+        <a href="https://www.linkedin.com/in/lior-keren-683608176/" target="_blank"><img src="icons/linkedin.png" alt="LinkedIn Icon"></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
