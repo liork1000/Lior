@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מדריך למתחילים: Claude Code</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%);
+      border-bottom: 1px solid #30363d;
+      padding: 28px 20px 24px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #f0883e;
+      letter-spacing: -0.5px;
+    }
+    header p {
+      font-size: 0.85rem;
+      color: #8b949e;
+      margin-top: 4px;
+    }
+
+    /* Progress dots */
+    .progress-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #30363d;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .dot.active { background: #f0883e; }
+
+    /* Main content */
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 16px 80px;
+    }
+
+    /* Section */
+    .section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section title */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 24px 0 16px;
+    }
+    .section-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f0883e;
+    }
+    .section-subtitle {
+      font-size: 0.8rem;
+      color: #8b949e;
+      margin-top: 2px;
+    }
+
+    /* Card */
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #58a6ff;
+      margin-bottom: 10px;
+    }
+    .card p {
+      font-size: 0.9rem;
+      color: #c9d1d9;
+    }
+
+    /* Code block */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 10px 0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.82rem;
+      color: #79c0ff;
+      overflow-x: auto;
+      white-space: pre;
+      direction: ltr;
+      text-align: left;
+    }
+    .code-inline {
+      background: #21262d;
+      color: #f0883e;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.82rem;
+    }
+
+    /* Command pill */
+    .cmd-list { display: flex; flex-direction: column; gap: 10px; }
+    .cmd-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .cmd-num {
+      background: #f0883e;
+      color: #0d1117;
+      font-weight: 800;
+      font-size: 0.75rem;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .cmd-content { flex: 1; }
+    .cmd-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e6edf3;
+      margin-bottom: 4px;
+    }
+    .cmd-desc {
+      font-size: 0.82rem;
+      color: #8b949e;
+    }
+
+    /* Compare table */
+    .compare {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .compare-bad, .compare-good {
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    .compare-bad {
+      background: #2d1117;
+      border: 1px solid #f8514933;
+      color: #ffa198;
+    }
+    .compare-good {
+      background: #0d2118;
+      border: 1px solid #3fb95033;
+      color: #56d364;
+    }
+    .compare-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .compare-bad .compare-label { color: #f85149; }
+    .compare-good .compare-label { color: #3fb950; }
+
+    /* Slash commands table */
+    .slash-list { display: flex; flex-direction: column; gap: 8px; }
+    .slash-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .slash-cmd {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: #f0883e;
+      font-weight: 700;
+      direction: ltr;
+    }
+    .slash-desc {
+      font-size: 0.82rem;
+      color: #8b949e;
+      text-align: right;
+    }
+
+    /* Tips */
+    .tip {
+      background: #161b22;
+      border-right: 3px solid #f0883e;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .tip-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #f0883e;
+      margin-bottom: 6px;
+    }
+    .tip-body {
+      font-size: 0.85rem;
+      color: #c9d1d9;
+    }
+
+    /* Examples */
+    .example {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .example-header {
+      background: #21262d;
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #58a6ff;
+      border-bottom: 1px solid #30363d;
+    }
+    .example-body { padding: 14px 16px; }
+    .bubble {
+      margin-bottom: 10px;
+      font-size: 0.85rem;
+    }
+    .bubble-you {
+      background: #1f3a5f;
+      border-radius: 8px 8px 8px 2px;
+      padding: 10px 14px;
+      color: #c9d1d9;
+      display: inline-block;
+      max-width: 90%;
+    }
+    .bubble-ai {
+      background: #0d2118;
+      border-radius: 8px 8px 2px 8px;
+      padding: 10px 14px;
+      color: #56d364;
+      display: inline-block;
+      max-width: 90%;
+      float: left;
+    }
+    .clearfix::after { content: ''; display: table; clear: both; }
+    .bubble-label {
+      font-size: 0.7rem;
+      color: #8b949e;
+      margin-bottom: 4px;
+    }
+
+    /* Checklist */
+    .checklist { list-style: none; }
+    .checklist li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #21262d;
+      font-size: 0.88rem;
+      color: #c9d1d9;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .check-beginner { background: #1f3a5f; color: #58a6ff; }
+    .check-mid     { background: #2d1f42; color: #bc8cff; }
+    .check-adv     { background: #0d2118; color: #56d364; }
+
+    /* Formula box */
+    .formula {
+      background: #1a1f2e;
+      border: 1px dashed #58a6ff44;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 14px 0;
+      text-align: center;
+    }
+    .formula-text {
+      font-size: 0.88rem;
+      color: #58a6ff;
+      font-weight: 600;
+    }
+    .formula-plus { color: #f0883e; margin: 0 6px; }
+
+    /* Navigation */
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #161b22;
+      border-top: 1px solid #30363d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      z-index: 10;
+    }
+    .nav-btn {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: #30363d; }
+    .nav-btn:disabled { opacity: 0.3; cursor: default; }
+    .nav-btn.primary {
+      background: #f0883e;
+      border-color: #f0883e;
+      color: #0d1117;
+    }
+    .nav-btn.primary:hover { background: #e8793a; }
+    .nav-counter {
+      font-size: 0.8rem;
+      color: #8b949e;
+      font-weight: 600;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      color: #8b949e;
+      margin-bottom: 14px;
+    }
+
+    /* Rule */
+    .rule-list { counter-reset: rule; }
+    .rule-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #21262d;
+      align-items: flex-start;
+    }
+    .rule-item:last-child { border-bottom: none; }
+    .rule-num {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #f0883e;
+      opacity: 0.5;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 28px;
+    }
+    .rule-text { font-size: 0.9rem; color: #c9d1d9; }
+    .rule-text strong { color: #e6edf3; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>מדריך למתחילים: Claude Code</h1>
+  <p>פשוט. מהיר. עם דוגמאות.</p>
+  <div class="progress-dots" id="dots"></div>
+</header>
+
+<main>
+
+  <!-- Section 0: Intro -->
+  <div class="section active" id="s0">
+    <div class="section-header">
+      <div class="section-icon">🤖</div>
+      <div>
+        <div class="section-title">מה זה Claude Code?</div>
+        <div class="section-subtitle">הכרות ראשונה</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>AI ישירות בטרמינל שלך</h3>
+      <p>במקום לפתוח דפדפן, להעתיק קוד ולהדביק בחזרה — Claude Code עובד ישירות על הפרויקט שלך מהטרמינל.</p>
+    </div>
+
+    <div class="card">
+      <h3>הבדל מהותי</h3>
+      <div class="code-block">לפני:  Copy → ChatGPT → Copy back → Paste
+Claude Code: כותב בטרמינל → הוא עושה הכל</div>
+    </div>
+
+    <div class="card">
+      <h3>מה הוא יכול לעשות?</h3>
+      <div class="cmd-list" style="margin-top:8px">
+        <div class="cmd-item">
+          <div class="cmd-num">✓</div>
+          <div class="cmd-content">
+            <div class="cmd-title">לקרוא ולהבין קוד קיים</div>
+            <div class="cmd-desc">מסביר קבצים שלמים בשפה פשוטה</div>
+          </div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-num">✓</div>
+          <div class="cmd-content">
+            <div class="cmd-title">לכתוב ולערוך קוד</div>
+            <div class="cmd-desc">מוסיף פיצ'רים, מתקן באגים, מבצע refactor</div>
+          </div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-num">✓</div>
+          <div class="cmd-content">
+            <div class="cmd-title">לרוץ פקודות</div>
+            <div class="cmd-desc">מריץ טסטים, git, npm וכל פקודת טרמינל</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: Installation -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-icon">⚡</div>
+      <div>
+        <div class="section-title">התקנה</div>
+        <div class="section-subtitle">שתי שורות ואתה בפנים</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>צעד יחיד</h3>
+      <div class="code-block">npm install -g @anthropic-ai/claude-code
+claude</div>
+      <p style="margin-top:10px; font-size:0.85rem; color:#8b949e">זהו. פותח שיחה ואתה מוכן.</p>
+    </div>
+
+    <div class="card">
+      <h3>5 הפקודות שתשתמש בהן 90% מהזמן</h3>
+      <div class="cmd-list" style="margin-top: 8px;">
+        <div class="cmd-item">
+          <div class="cmd-num">1</div>
+          <div class="cmd-content">
+            <div class="cmd-title"><span class="code-inline">claude</span></div>
+            <div class="cmd-desc">פתח שיחה אינטראקטיבית</div>
+          </div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-num">2</div>
+          <div class="cmd-content">
+            <div class="cmd-title"><span class="code-inline">claude -p "שאלה"</span></div>
+            <div class="cmd-desc">שאלה מהירה בלי לפתוח שיחה</div>
+          </div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-num">3</div>
+          <div class="cmd-content">
+            <div class="cmd-title"><span class="code-inline">claude --continue</span></div>
+            <div class="cmd-desc">המשך שיחה קודמת</div>
+          </div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-num">4</div>
+          <div class="cmd-content">
+            <div class="cmd-title"><span class="code-inline">claude -p "..." &lt; file.py</span></div>
+            <div class="cmd-desc">שלח קובץ לעיבוד</div>
+          </div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-num">5</div>
+          <div class="cmd-content">
+            <div class="cmd-title"><span class="code-inline">/exit</span> או <span class="code-inline">Ctrl+C</span></div>
+            <div class="cmd-desc">יציאה מהשיחה</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Prompts -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-icon">✍️</div>
+      <div>
+        <div class="section-title">איך לכתוב פרומפטים טובים</div>
+        <div class="section-subtitle">הסוד להצלחה</div>
+      </div>
+    </div>
+
+    <div class="formula">
+      <div class="formula-text">
+        <span>מה הבעיה</span>
+        <span class="formula-plus">+</span>
+        <span>איפה בקוד</span>
+        <span class="formula-plus">+</span>
+        <span>מה הציפייה</span>
+      </div>
+    </div>
+
+    <div class="badge">רע vs טוב</div>
+
+    <div class="compare">
+      <div class="compare-row">
+        <div class="compare-bad">
+          <div class="compare-label">רע</div>
+          "תקן את הקוד"
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">טוב</div>
+          "הפונקציה login() מחזירה None במקום True, תקן"
+        </div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-bad">
+          <div class="compare-label">רע</div>
+          "תוסיף פיצ'ר"
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">טוב</div>
+          "תוסיף ולידציה על שדה email בטופס ההרשמה"
+        </div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-bad">
+          <div class="compare-label">רע</div>
+          "יש באג"
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">טוב</div>
+          "שגיאה: TypeError: Cannot read properties of undefined בשורה 42"
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 14px;">
+      <h3>דוגמה מלאה</h3>
+      <div class="code-block">תוסיף טיפול בשגיאות לפונקציה fetchUser
+בקובץ api.js. כשה-API מחזיר 404,
+צריך להציג הודעה "משתמש לא נמצא"</div>
+    </div>
+  </div>
+
+  <!-- Section 3: Slash Commands -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-icon">⌨️</div>
+      <div>
+        <div class="section-title">פקודות Slash</div>
+        <div class="section-subtitle">הכלים החבויים</div>
+      </div>
+    </div>
+
+    <p style="font-size:0.85rem; color:#8b949e; margin-bottom:14px">
+      בתוך שיחה עם Claude Code, יש פקודות מיוחדות:
+    </p>
+
+    <div class="slash-list">
+      <div class="slash-item">
+        <span class="slash-cmd">/help</span>
+        <span class="slash-desc">רשימת כל הפקודות</span>
+      </div>
+      <div class="slash-item">
+        <span class="slash-cmd">/clear</span>
+        <span class="slash-desc">נקה היסטוריה — שיחה חדשה</span>
+      </div>
+      <div class="slash-item">
+        <span class="slash-cmd">/compact</span>
+        <span class="slash-desc">דחס היסטוריה לחסכון ב-tokens</span>
+      </div>
+      <div class="slash-item">
+        <span class="slash-cmd">/cost</span>
+        <span class="slash-desc">כמה tokens השתמשת</span>
+      </div>
+      <div class="slash-item">
+        <span class="slash-cmd">/model</span>
+        <span class="slash-desc">החלף מודל (Opus/Sonnet/Haiku)</span>
+      </div>
+      <div class="slash-item">
+        <span class="slash-cmd">/review</span>
+        <span class="slash-desc">קוד ריוויו על השינויים הנוכחיים</span>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:16px">
+      <div class="tip-title">טיפ: /compact לשיחות ארוכות</div>
+      <div class="tip-body">אחרי ~20 הודעות, כתוב <span class="code-inline">/compact</span> — הוא יסכם ויחסוך tokens משמעותית.</div>
+    </div>
+  </div>
+
+  <!-- Section 4: Examples -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-icon">💡</div>
+      <div>
+        <div class="section-title">דוגמאות מעשיות</div>
+        <div class="section-subtitle">4 תרחישים נפוצים</div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header">1. הבנת קוד זר</div>
+      <div class="example-body">
+        <div class="bubble">
+          <div class="bubble-label">אתה</div>
+          <div class="bubble-you">הסבר לי מה הקובץ auth/middleware.js עושה בשפה פשוטה</div>
+        </div>
+        <div class="bubble clearfix">
+          <div class="bubble-label" style="text-align:left">Claude Code</div>
+          <div class="bubble-ai">קורא את הקובץ ומסביר כל פונקציה בעברית ברורה</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header">2. כתיבת טסטים</div>
+      <div class="example-body">
+        <div class="bubble">
+          <div class="bubble-label">אתה</div>
+          <div class="bubble-you">כתוב unit tests לפונקציה calculateDiscount ב-pricing.js. השתמש ב-Jest, כסה edge cases של 0%, 100% ומספרים שליליים</div>
+        </div>
+        <div class="bubble clearfix">
+          <div class="bubble-label" style="text-align:left">Claude Code</div>
+          <div class="bubble-ai">כותב טסטים מלאים ומוסיף לקובץ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header">3. Refactor</div>
+      <div class="example-body">
+        <div class="bubble">
+          <div class="bubble-label">אתה</div>
+          <div class="bubble-you">הפונקציה processOrders ב-orders.js ארוכה מדי (200 שורות). פצל אותה ל-3 פונקציות קטנות</div>
+        </div>
+        <div class="bubble clearfix">
+          <div class="bubble-label" style="text-align:left">Claude Code</div>
+          <div class="bubble-ai">מפצל, מוסיף לקוד, ומציג לאישור</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header">4. Debug</div>
+      <div class="example-body">
+        <div class="bubble">
+          <div class="bubble-label">אתה</div>
+          <div class="bubble-you">שגיאה ב-utils.test.js שורה 34: Expected: 42, Received: undefined</div>
+        </div>
+        <div class="bubble clearfix">
+          <div class="bubble-label" style="text-align:left">Claude Code</div>
+          <div class="bubble-ai">מוצא את הבאג ומציע תיקון מדויק</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Tips -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-icon">🚀</div>
+      <div>
+        <div class="section-title">טיפים שיחסכו לך זמן</div>
+        <div class="section-subtitle">מה שמבדיל בינוני ממומחה</div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-title">טיפ 1: תן הקשר בהתחלה</div>
+      <div class="tip-body">
+        <div class="code-block" style="margin-top:8px">"אני בונה React + TypeScript + Firebase.
+עובד על מודול התחברות. צריך login עם Google."</div>
+        <p style="margin-top:8px">ככל שתתן יותר הקשר בהתחלה, התוצאות יהיו טובות יותר.</p>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-title">טיפ 2: צור CLAUDE.md בפרויקט</div>
+      <div class="tip-body">
+        <p>Claude Code קורא את הקובץ הזה <strong style="color:#f0883e">אוטומטית</strong> בכל שיחה:</p>
+        <div class="code-block" style="margin-top:8px"># הוראות לפרויקט
+- שפה: TypeScript
+- בדיקות: Jest
+- כל פונקציה חייבת JSDoc</div>
+        <p style="margin-top:8px">חוסך הסברים חוזרים בכל שיחה.</p>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-title">טיפ 3: בדוק שינויים עם git diff</div>
+      <div class="tip-body">
+        <div class="code-block" style="margin-top:8px">git diff        # ראה מה השתנה
+git add .
+git commit -m "feat: תיאור השינוי"</div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-title">טיפ 4: צעד אחד בכל פעם</div>
+      <div class="tip-body">אל תבקש 5 דברים בבת אחת. שאלה אחת → בדוק → שאלה הבאה. זה הרבה יותר יעיל.</div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-title">טיפ 5: בקש הסברים</div>
+      <div class="tip-body">
+        <span class="code-inline">"עשית את השינוי — הסבר לי למה בחרת בגישה הזו"</span>
+        <p style="margin-top:8px">זה הדרך הכי מהירה ללמוד.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Levels -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-icon">🏆</div>
+      <div>
+        <div class="section-title">רמות מיומנות</div>
+        <div class="section-subtitle">המסע שלך</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color: #58a6ff;">מתחיל — שבוע 1</h3>
+      <ul class="checklist" style="margin-top:8px">
+        <li><div class="check-icon check-beginner">◯</div>הפעל claude בטרמינל</li>
+        <li><div class="check-icon check-beginner">◯</div>בקש הסבר על קובץ קיים</li>
+        <li><div class="check-icon check-beginner">◯</div>בקש תיקון לבאג פשוט</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="color: #bc8cff;">בינוני — שבוע 2-3</h3>
+      <ul class="checklist" style="margin-top:8px">
+        <li><div class="check-icon check-mid">◯</div>צור CLAUDE.md לפרויקט</li>
+        <li><div class="check-icon check-mid">◯</div>כתוב פרומפטים מפורטים</li>
+        <li><div class="check-icon check-mid">◯</div>בקש כתיבת טסטים אוטומטיים</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="color: #56d364;">מתקדם — חודש ראשון</h3>
+      <ul class="checklist" style="margin-top:8px">
+        <li><div class="check-icon check-adv">◯</div>תהליך מלא: plan → code → test → commit</li>
+        <li><div class="check-icon check-adv">◯</div>שימוש ב-hooks להפעלה אוטומטית</li>
+        <li><div class="check-icon check-adv">◯</div>Multi-agent לפרויקטים מורכבים</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 7: Summary -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <div>
+        <div class="section-title">3 כללים שיקבעו הכל</div>
+        <div class="section-subtitle">שמור אותם</div>
+      </div>
+    </div>
+
+    <div class="rule-list">
+      <div class="rule-item">
+        <div class="rule-num">1</div>
+        <div class="rule-text"><strong>פרומפט ספציפי</strong><br>ככל שתהיה יותר מדויק, כך התוצאה תהיה טובה יותר. תמיד ציין קובץ, שורה, ושגיאה ספציפית.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">2</div>
+        <div class="rule-text"><strong>צעד אחד בכל פעם</strong><br>אל תבקש 5 דברים בבת אחת. פירוק לצעדים קטנים = תוצאות טובות יותר.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">3</div>
+        <div class="rule-text"><strong>בדוק את השינויים</strong><br><span class="code-inline">git diff</span> הוא חבר שלך. תמיד בדוק לפני commit.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px; text-align:center; border-color: #f0883e44; background: #1a1207;">
+      <div style="font-size: 1.8rem; margin-bottom: 8px;">🚀</div>
+      <h3 style="color: #f0883e; font-size: 1rem;">מוכן להתחיל?</h3>
+      <p style="margin-top: 8px; font-size: 0.85rem;">פתח טרמינל, כתוב <span class="code-inline">claude</span> ותתחיל לדבר איתו בעברית.</p>
+    </div>
+  </div>
+
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn" id="btnPrev" onclick="navigate(-1)">→ הקודם</button>
+  <span class="nav-counter" id="counter">1 / 8</span>
+  <button class="nav-btn primary" id="btnNext" onclick="navigate(1)">הבא ←</button>
+</nav>
+
+<script>
+  const sections = document.querySelectorAll('.section');
+  const dots = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  let current = 0;
+
+  // Build dots
+  sections.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dots.appendChild(d);
+  });
+
+  function goTo(n) {
+    sections[current].classList.remove('active');
+    dots.children[current].classList.remove('active');
+    current = n;
+    sections[current].classList.add('active');
+    dots.children[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + sections.length;
+    btnPrev.disabled = current === 0;
+    btnNext.textContent = current === sections.length - 1 ? '✓ סיום' : 'הבא ←';
+    btnNext.disabled = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function navigate(dir) {
+    const next = current + dir;
+    if (next >= 0 && next < sections.length) goTo(next);
+  }
+
+  goTo(0);
+</script>
+
+</body>
+</html>
